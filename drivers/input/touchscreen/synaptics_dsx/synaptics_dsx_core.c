@@ -105,20 +105,28 @@ static int synaptics_rmi4_free_fingers(struct synaptics_rmi4_data *rmi4_data);
 static int synaptics_rmi4_reinit_device(struct synaptics_rmi4_data *rmi4_data);
 static int synaptics_rmi4_reset_device(struct synaptics_rmi4_data *rmi4_data);
 
+#ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_DSX_CORE_SYSFS
 static ssize_t synaptics_rmi4_full_pm_cycle_show(struct device *dev,
 		struct device_attribute *attr, char *buf);
 
 static ssize_t synaptics_rmi4_full_pm_cycle_store(struct device *dev,
 		struct device_attribute *attr, const char *buf, size_t count);
+#endif
 
+#if defined(CONFIG_TOUCHSCREEN_SYNAPTICS_DSX_CORE_INTERACTIVE_SYSFS) || \
+	defined(CONFIG_HAS_EARLYSUSPEND)
 static void synaptics_rmi4_early_suspend(struct device *dev);
 
 static void synaptics_rmi4_late_resume(struct device *dev);
+#endif
 
+#ifdef CONFIG_PM
 static int synaptics_rmi4_suspend(struct device *dev);
 
 static int synaptics_rmi4_resume(struct device *dev);
+#endif
 
+#ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_DSX_CORE_SYSFS
 static ssize_t synaptics_rmi4_f01_reset_store(struct device *dev,
 		struct device_attribute *attr, const char *buf, size_t count);
 
@@ -137,20 +145,27 @@ static ssize_t synaptics_rmi4_0dbutton_show(struct device *dev,
 static ssize_t synaptics_rmi4_0dbutton_store(struct device *dev,
 		struct device_attribute *attr, const char *buf, size_t count);
 
+#ifdef CONFIG_PM
 static ssize_t synaptics_rmi4_suspend_store(struct device *dev,
 		struct device_attribute *attr, const char *buf, size_t count);
+#endif
+#endif
 
+#ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_DSX_CORE_WAKE_GESTURE_SYSFS
 static ssize_t synaptics_rmi4_wake_gesture_show(struct device *dev,
 		struct device_attribute *attr, char *buf);
 
 static ssize_t synaptics_rmi4_wake_gesture_store(struct device *dev,
 		struct device_attribute *attr, const char *buf, size_t count);
+#endif
 
+#ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_DSX_CORE_INTERACTIVE_SYSFS
 static ssize_t synaptics_rmi4_interactive_show(struct device *dev,
         struct device_attribute *attr, char *buf);
 
 static ssize_t synaptics_rmi4_interactive_store(struct device *dev,
         struct device_attribute *attr, const char *buf, size_t count);
+#endif
 
 #ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_DSX_WAKEUP_GESTURE
 static int facedown_status_handler_func(struct notifier_block *this,
@@ -363,7 +378,11 @@ struct synaptics_rmi4_exp_fn_data {
 
 static struct synaptics_rmi4_exp_fn_data exp_data;
 
+#if defined(CONFIG_TOUCHSCREEN_SYNAPTICS_DSX_CORE_INTERACTIVE_SYSFS) || \
+	defined(CONFIG_TOUCHSCREEN_SYNAPTICS_DSX_CORE_WAKE_GESTURE_SYSFS) || \
+	defined(CONFIG_TOUCHSCREEN_SYNAPTICS_DSX_CORE_SYSFS)
 static struct device_attribute attrs[] = {
+#ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_DSX_CORE_SYSFS
 	__ATTR(full_pm_cycle, (S_IRUGO | S_IWUGO),
 			synaptics_rmi4_full_pm_cycle_show,
 			synaptics_rmi4_full_pm_cycle_store),
@@ -382,17 +401,26 @@ static struct device_attribute attrs[] = {
 	__ATTR(0dbutton, (S_IRUGO | S_IWUGO),
 			synaptics_rmi4_0dbutton_show,
 			synaptics_rmi4_0dbutton_store),
+#ifdef CONFIG_PM
 	__ATTR(suspend, S_IWUGO,
 			synaptics_rmi4_show_error,
 			synaptics_rmi4_suspend_store),
+#endif
+#endif
+#ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_DSX_CORE_WAKE_GESTURE_SYSFS
 	__ATTR(wake_gesture, (S_IRUGO | S_IWUGO),
 			synaptics_rmi4_wake_gesture_show,
 			synaptics_rmi4_wake_gesture_store),
+#endif
+#ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_DSX_CORE_INTERACTIVE_SYSFS
 	__ATTR(interactive, (S_IRUGO | S_IWUGO),
             synaptics_rmi4_interactive_show,
             synaptics_rmi4_interactive_store),
+#endif
 };
+#endif
 
+#ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_DSX_CORE_SYSFS
 static ssize_t synaptics_rmi4_full_pm_cycle_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
@@ -544,6 +572,7 @@ static ssize_t synaptics_rmi4_0dbutton_store(struct device *dev,
 	return count;
 }
 
+#ifdef CONFIG_PM
 static ssize_t synaptics_rmi4_suspend_store(struct device *dev,
 		struct device_attribute *attr, const char *buf, size_t count)
 {
@@ -561,7 +590,10 @@ static ssize_t synaptics_rmi4_suspend_store(struct device *dev,
 
 	return count;
 }
+#endif
+#endif
 
+#ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_DSX_CORE_WAKE_GESTURE_SYSFS
 static ssize_t synaptics_rmi4_wake_gesture_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
@@ -595,7 +627,9 @@ static ssize_t synaptics_rmi4_wake_gesture_store(struct device *dev,
 
 	return count;
 }
+#endif
 
+#ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_DSX_CORE_INTERACTIVE_SYSFS
 static ssize_t synaptics_rmi4_interactive_show(struct device *dev,
         struct device_attribute *attr, char *buf)
 {
@@ -624,6 +658,7 @@ static ssize_t synaptics_rmi4_interactive_store(struct device *dev,
     }
     return count;
 }
+#endif
 
 static unsigned short synaptics_sqrt(unsigned int num)
 {
@@ -1309,7 +1344,7 @@ static int synaptics_rmi4_irq_enable(struct synaptics_rmi4_data *rmi4_data,
 	return retval;
 }
 
-static void synaptics_rmi4_set_intr_mask(struct synaptics_rmi4_fn *fhandler,
+static int synaptics_rmi4_set_intr_mask(struct synaptics_rmi4_fn *fhandler,
 		struct synaptics_rmi4_fn_desc *fd,
 		unsigned int intr_count)
 {
@@ -1317,6 +1352,12 @@ static void synaptics_rmi4_set_intr_mask(struct synaptics_rmi4_fn *fhandler,
 	unsigned char intr_offset;
 
 	fhandler->intr_reg_num = (intr_count + 7) / 8;
+	if (fhandler->intr_reg_num >= MAX_INTR_REGISTERS) {
+		fhandler->intr_reg_num = 0;
+		fhandler->num_of_data_sources = 0;
+		fhandler->intr_mask = 0;
+		return -EINVAL;
+	}
 	if (fhandler->intr_reg_num != 0)
 		fhandler->intr_reg_num -= 1;
 
@@ -1329,7 +1370,7 @@ static void synaptics_rmi4_set_intr_mask(struct synaptics_rmi4_fn *fhandler,
 			ii++)
 		fhandler->intr_mask |= 1 << ii;
 
-	return;
+	return 0;
 }
 
 static int synaptics_rmi4_f01_init(struct synaptics_rmi4_data *rmi4_data,
@@ -1337,12 +1378,17 @@ static int synaptics_rmi4_f01_init(struct synaptics_rmi4_data *rmi4_data,
 		struct synaptics_rmi4_fn_desc *fd,
 		unsigned int intr_count)
 {
+	int retval;
+
 	fhandler->fn_number = fd->fn_number;
 	fhandler->num_of_data_sources = fd->intr_src_count;
 	fhandler->data = NULL;
 	fhandler->extra = NULL;
 
-	synaptics_rmi4_set_intr_mask(fhandler, fd, intr_count);
+	retval = synaptics_rmi4_set_intr_mask(fhandler, fd, intr_count);
+	if (retval < 0)
+		return retval;
+
 
 	rmi4_data->f01_query_base_addr = fd->query_base_addr;
 	rmi4_data->f01_ctrl_base_addr = fd->ctrl_base_addr;
@@ -1406,7 +1452,9 @@ static int synaptics_rmi4_f11_init(struct synaptics_rmi4_data *rmi4_data,
 	rmi4_data->max_touch_width = synaptics_sqrt(
 			MAX_F11_TOUCH_WIDTH * MAX_F11_TOUCH_WIDTH * 2);
 
-	synaptics_rmi4_set_intr_mask(fhandler, fd, intr_count);
+	retval = synaptics_rmi4_set_intr_mask(fhandler, fd, intr_count);
+	if (retval < 0)
+		return retval;
 
 	abs_data_size = query[5] & MASK_2BIT;
 	abs_data_blk_size = 3 + (2 * (abs_data_size == 0 ? 1 : 0));
@@ -1607,7 +1655,9 @@ static int synaptics_rmi4_f12_init(struct synaptics_rmi4_data *rmi4_data,
 				query_8.data3_is_present;
 	}
 
-	synaptics_rmi4_set_intr_mask(fhandler, fd, intr_count);
+	retval = synaptics_rmi4_set_intr_mask(fhandler, fd, intr_count);
+	if (retval < 0)
+		return retval;
 
 	/* Allocate memory for finger data storage space */
 	fhandler->data_size = num_of_fingers * size_of_2d_data;
@@ -1756,7 +1806,9 @@ static int synaptics_rmi4_f1a_init(struct synaptics_rmi4_data *rmi4_data,
 	fhandler->fn_number = fd->fn_number;
 	fhandler->num_of_data_sources = fd->intr_src_count;
 
-	synaptics_rmi4_set_intr_mask(fhandler, fd, intr_count);
+	retval = synaptics_rmi4_set_intr_mask(fhandler, fd, intr_count);
+	if (retval < 0)
+		return retval;
 
 	retval = synaptics_rmi4_f1a_alloc_mem(rmi4_data, fhandler);
 	if (retval < 0)
@@ -2137,6 +2189,8 @@ flash_prog_mode:
 	dev_dbg(rmi4_data->pdev->dev.parent,
 			"%s: Number of interrupt registers = %d\n",
 			__func__, rmi4_data->num_of_intr_regs);
+	if (rmi4_data->num_of_intr_regs >= MAX_INTR_REGISTERS)
+		return -EINVAL;
 
 	retval = synaptics_rmi4_reg_read(rmi4_data,
 			rmi4_data->f01_query_base_addr,
@@ -2541,6 +2595,8 @@ static int synaptics_rmi4_free_fingers(struct synaptics_rmi4_data *rmi4_data)
 	return 0;
 }
 
+#if defined(CONFIG_TOUCHSCREEN_SYNAPTICS_DSX_CORE_INTERACTIVE_SYSFS) || \
+	defined(CONFIG_HAS_EARLYSUSPEND)
 static int synaptics_rmi4_force_cal(struct synaptics_rmi4_data *rmi4_data)
 {
 
@@ -2557,6 +2613,7 @@ static int synaptics_rmi4_force_cal(struct synaptics_rmi4_data *rmi4_data)
 
 	return 0;
 }
+#endif
 
 static int synaptics_rmi4_sw_reset(struct synaptics_rmi4_data *rmi4_data)
 {
@@ -2763,7 +2820,11 @@ static struct notifier_block facedown_status_handler = {
 static int synaptics_rmi4_probe(struct platform_device *pdev)
 {
 	int retval;
+#if defined(CONFIG_TOUCHSCREEN_SYNAPTICS_DSX_CORE_INTERACTIVE_SYSFS) || \
+	defined(CONFIG_TOUCHSCREEN_SYNAPTICS_DSX_CORE_WAKE_GESTURE_SYSFS) || \
+	defined(CONFIG_TOUCHSCREEN_SYNAPTICS_DSX_CORE_SYSFS)
 	unsigned char attr_count;
+#endif
 	struct synaptics_rmi4_data *rmi4_data;
 	const struct synaptics_dsx_hw_interface *hw_if;
 	const struct synaptics_dsx_board_data *bdata;
@@ -2901,6 +2962,9 @@ static int synaptics_rmi4_probe(struct platform_device *pdev)
 		goto err_enable_irq;
 	}
 
+#if defined(CONFIG_TOUCHSCREEN_SYNAPTICS_DSX_CORE_INTERACTIVE_SYSFS) || \
+	defined(CONFIG_TOUCHSCREEN_SYNAPTICS_DSX_CORE_WAKE_GESTURE_SYSFS) || \
+	defined(CONFIG_TOUCHSCREEN_SYNAPTICS_DSX_CORE_SYSFS)
 	for (attr_count = 0; attr_count < ARRAY_SIZE(attrs); attr_count++) {
 		retval = sysfs_create_file(&rmi4_data->input_dev->dev.kobj,
 				&attrs[attr_count].attr);
@@ -2911,6 +2975,7 @@ static int synaptics_rmi4_probe(struct platform_device *pdev)
 			goto err_sysfs;
 		}
 	}
+#endif
 
 	exp_data.workqueue = create_singlethread_workqueue("dsx_exp_workqueue");
 	INIT_DELAYED_WORK(&exp_data.work, synaptics_rmi4_exp_fn_work);
@@ -2922,6 +2987,9 @@ static int synaptics_rmi4_probe(struct platform_device *pdev)
 
 	return retval;
 
+#if defined(CONFIG_TOUCHSCREEN_SYNAPTICS_DSX_CORE_INTERACTIVE_SYSFS) || \
+	defined(CONFIG_TOUCHSCREEN_SYNAPTICS_DSX_CORE_WAKE_GESTURE_SYSFS) || \
+	defined(CONFIG_TOUCHSCREEN_SYNAPTICS_DSX_CORE_SYSFS)
 err_sysfs:
 	for (attr_count--; attr_count >= 0; attr_count--) {
 		sysfs_remove_file(&rmi4_data->input_dev->dev.kobj,
@@ -2930,6 +2998,7 @@ err_sysfs:
 
 	synaptics_rmi4_irq_enable(rmi4_data, false);
 	free_irq(rmi4_data->irq, rmi4_data);
+#endif
 
 err_enable_irq:
 #ifdef CONFIG_HAS_EARLYSUSPEND
@@ -2967,7 +3036,11 @@ err_get_reg:
 
 static int synaptics_rmi4_remove(struct platform_device *pdev)
 {
+#if defined(CONFIG_TOUCHSCREEN_SYNAPTICS_DSX_CORE_INTERACTIVE_SYSFS) || \
+	defined(CONFIG_TOUCHSCREEN_SYNAPTICS_DSX_CORE_WAKE_GESTURE_SYSFS) || \
+	defined(CONFIG_TOUCHSCREEN_SYNAPTICS_DSX_CORE_SYSFS)
 	unsigned char attr_count;
+#endif
 	struct synaptics_rmi4_data *rmi4_data = platform_get_drvdata(pdev);
 	const struct synaptics_dsx_board_data *bdata =
 			rmi4_data->hw_if->board_data;
@@ -2976,10 +3049,14 @@ static int synaptics_rmi4_remove(struct platform_device *pdev)
 	flush_workqueue(exp_data.workqueue);
 	destroy_workqueue(exp_data.workqueue);
 
+#if defined(CONFIG_TOUCHSCREEN_SYNAPTICS_DSX_CORE_INTERACTIVE_SYSFS) || \
+	defined(CONFIG_TOUCHSCREEN_SYNAPTICS_DSX_CORE_WAKE_GESTURE_SYSFS) || \
+	defined(CONFIG_TOUCHSCREEN_SYNAPTICS_DSX_CORE_SYSFS)
 	for (attr_count = 0; attr_count < ARRAY_SIZE(attrs); attr_count++) {
 		sysfs_remove_file(&rmi4_data->input_dev->dev.kobj,
 				&attrs[attr_count].attr);
 	}
+#endif
 
 	synaptics_rmi4_irq_enable(rmi4_data, false);
 	free_irq(rmi4_data->irq, rmi4_data);
@@ -3206,6 +3283,8 @@ static void synaptics_rmi4_sensor_wake(struct synaptics_rmi4_data *rmi4_data)
 	return;
 }
 
+#if defined(CONFIG_TOUCHSCREEN_SYNAPTICS_DSX_CORE_INTERACTIVE_SYSFS) || \
+	defined(CONFIG_HAS_EARLYSUSPEND)
 static void synaptics_rmi4_early_suspend(struct device *dev)
 {
 	struct synaptics_rmi4_exp_fhandler *exp_fhandler;
@@ -3282,6 +3361,7 @@ exit:
 
 	return;
 }
+#endif
 
 #ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_DSX_WAKEUP_GESTURE
 static int facedown_status_handler_func(struct notifier_block *this,
