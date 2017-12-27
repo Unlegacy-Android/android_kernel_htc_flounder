@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7668a9f2_313c6645",
+        "filename": "sound/soc/codecs/tfa9895.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 352,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2017-12-27T13:05:33Z",
+      "side": 1,
+      "message": "@Josiah, check what value buf has.",
+      "revId": "a0fd729eead1dd6ceb4c9af935bd52fbaf293cbb",
+      "serverId": "d5e41ece-075f-43fb-b5a6-48951f3d7b1d",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e74b9937_47d5754a",
+        "filename": "sound/soc/codecs/tfa9895.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 358,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2017-12-27T13:05:33Z",
+      "side": 1,
+      "message": "And if with that if commented it lands here.",
+      "revId": "a0fd729eead1dd6ceb4c9af935bd52fbaf293cbb",
+      "serverId": "d5e41ece-075f-43fb-b5a6-48951f3d7b1d",
+      "unresolved": false
+    }
+  ]
+}
