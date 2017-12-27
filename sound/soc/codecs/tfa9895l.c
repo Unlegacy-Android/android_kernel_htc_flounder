@@ -344,10 +344,11 @@ static long tfa9895l_ioctl(struct file *file, unsigned int cmd,
 		rc = tfa9895_i2c_read(buf->buffer, buf_size);
 		break;
 	case TFA9895_ENABLE_DSP_NR:
-		if (buf_size < sizeof(int)) {
+		pr_info("%s: TFA9895_ENABLE_DSP %d\n", __func__, buf);
+		/*if (buf_size < sizeof(int)) {
 			rc = -EINVAL;
 			break;
-		}
+		}*/
 		dspl_enabled = *(int *)buf;
 		pr_info("%s: TFA9895_ENABLE_DSP %d\n", __func__, dspl_enabled);
 		break;

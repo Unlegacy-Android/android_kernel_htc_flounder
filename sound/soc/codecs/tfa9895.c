@@ -349,10 +349,11 @@ static long tfa9895_ioctl(struct file *file, unsigned int cmd,
 		rc = tfa9895_l_read(buf->buffer, buf_size);
 		break;
 	case TFA9895_ENABLE_DSP_NR:
-		if (buf_size < sizeof(int)) {
+		pr_info("%s: TFA9895_ENABLE_DSP %d\n", __func__, buf);
+		/*if (buf_size < sizeof(int)) {
 			rc = -EINVAL;
 			break;
-		}
+		}*/
 		dsp_enabled = *(int *)buf;
 		pr_info("%s: TFA9895_ENABLE_DSP %d\n", __func__, dsp_enabled);
 		break;
